@@ -85,10 +85,10 @@ class App extends Component {
     }
   }
 
-  displayFaceBox = (box) => {
-    this.setState({ box })
-    console.log(box)
-  }
+  displayFaceBox = (box) => box && Object.keys(box).length > 0 ?
+    this.setState({ box }) :
+    console.log('No face detected.'); // Handle no face detected case
+
 
   onInputChange = (event) => {
     this.setState({ input: event.target.value })
