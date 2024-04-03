@@ -1,7 +1,6 @@
 import React from "react";
-import './SignIn.css'
 
-const SignIn = ({ onRouteChange }) => {
+const Register = ({ onRouteChange }) => {
     return (
         <main className="pa4 black-80 center">
             <div className="measure white">
@@ -10,8 +9,22 @@ const SignIn = ({ onRouteChange }) => {
                     className="ba b--transparent ph0 mh0"
                 >
                     <legend className="f2 fw6 ph0 mh0">
-                        Sign In
+                        Create Account
                     </legend>
+                    <div className="mt3">
+                        <label
+                            className="db fw6 lh-copy f6"
+                            htmlFor="full-name"
+                        >
+                            First Name
+                        </label>
+                        <input
+                            className="pa2 input-reset ba bg-transparent hover-bg-white white hover-black w-100"
+                            type="text"
+                            name="full-name"
+                            id="full-name"
+                        />
+                    </div>
                     <div className="mt3">
                         <label
                             className="db fw6 lh-copy f6"
@@ -45,16 +58,21 @@ const SignIn = ({ onRouteChange }) => {
                     <input
                         className="b ph3 pv2 input-reset ba white b--white bg-transparent grow pointer f6 dib"
                         type="submit"
-                        value="Sign in"
+                        value="Create Account"
                         onClick={() => onRouteChange('home')}
                     />
                 </div>
                 <div className="lh-copy mt3">
-                    <p onClick={() => onRouteChange('register')} className="f6 link dim white db pointer">Create Account</p>
+                    <p
+                        className="f6 link dim white db pointer"
+                        onClick={() => onRouteChange('signin')}
+                    >
+                        Sign In
+                    </p>
                 </div>
             </div>
         </main>
     )
 }
 
-export default SignIn
+export default Register
