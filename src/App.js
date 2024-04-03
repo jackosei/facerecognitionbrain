@@ -8,7 +8,7 @@ import ParticlesBg from 'particles-bg'
 import './App.css';
 
 
-const returnClarifaiRequest = () => {
+const returnClarifaiRequest = (imageUrl) => {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////
   // In this section, we set the user authentication, user and app ID, model details, and the URL
@@ -23,8 +23,8 @@ const returnClarifaiRequest = () => {
   const APP_ID = 'face-detection-app';
   // Change these to whatever model and image URL you want to use
   const MODEL_ID = 'face-detection';
-  const IMAGE_URL = 'https://samples.clarifai.com/metro-north.jpg';
-
+  const IMAGE_URL = imageUrl;
+  // console.log(imageUrl)
   ///////////////////////////////////////////////////////////////////////////////////
   // YOU DO NOT NEED TO CHANGE ANYTHING BELOW THIS LINE TO RUN THIS EXAMPLE
   ///////////////////////////////////////////////////////////////////////////////////
@@ -71,19 +71,57 @@ class App extends Component {
     }
   }
 
-  calculateFaceLocation = (data) => {
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box
-    const image = document.getElementById('inputImage')
-    const width = Number(image.width)
-    const height = Number(image.height)
+  calculateFaceLocation = (regions) => {
+    let bTopRow, bLeftCol, bBottomRow, bRightCol;
+    const image = document.getElementById('inputImage');
+    const width = Number(image.width);
+    const height = Number(image.height);
+
+    // regions.forEach(region => {
+    //   // Accessing and rounding the bounding box values
+    //   const boundingBox = region.region_info.bounding_box;
+    //   console.log(boundingBox);
+    //   bTopRow = boundingBox.top_row.toFixed(3);
+    //   bLeftCol = boundingBox.left_col.toFixed(3);
+    //   bBottomRow = boundingBox.bottom_row.toFixed(3);
+    //   bRightCol = boundingBox.right_col.toFixed(3);
+
+    //   region.data.concepts.forEach(concept => {
+    //     // Accessing and rounding the concept value
+    //     const name = concept.name;
+    //     const value = concept.value.toFixed(4);
+
+    //     console.log(`${name}: ${value} BBox: ${bTopRow}, ${bLeftCol}, ${bBottomRow}, ${bRightCol}`)
+    //   });
+    // });
+    // const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box
+
+
+    const boundingBox = regions[0].region_info.bounding_box;
+    // console.log(boundingBox);
+    bTopRow = boundingBox.top_row.toFixed(3);
+    bLeftCol = boundingBox.left_col.toFixed(3);
+    bBottomRow = boundingBox.bottom_row.toFixed(3);
+    bRightCol = boundingBox.right_col.toFixed(3);
+
+
+
 
     return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - (clarifaiFace.right_col * width),
-      bottomRow: height - (clarifaiFace.bottom_row * height)
-    }
-  }
+      leftCol: bLeftCol * width,
+      topRow: bTopRow * height,
+      rightCol: width - (bRightCol * width),
+      bottomRow: height - (bBottomRow * height)
+    };
+
+    // return {
+    //   leftCol: bLeftCol,
+    //   topRow: bTopRow,
+    //   rightCol: width,
+    //   bottomRow: height
+    // };
+  };
+
 
   displayFaceBox = (box) => box && Object.keys(box).length > 0 ?
     this.setState({ box }) :
@@ -99,24 +137,13 @@ class App extends Component {
 
     fetch("https://api.clarifai.com/v2/models/" + 'face-detection' + "/outputs", returnClarifaiRequest(this.state.input))
       .then(response => response.json())
-      .then(response => {
-        console.log('Hi', response)
-        if (response) {
-          // fetch('http://localhost:3000/image', {
-          //   method: 'put',
-          //   headers: { 'Content-Type': 'application/json' },
-          //   body: JSON.stringify({
-          //     id: this.state.user.id
-          //   })
-          // })
-          //   .then(response => response.json())
-          //   .then(count => {
-          //     this.setState(Object.assign(this.state.user, { entries: count }))
-          //   })
-        }
-        this.displayFaceBox(this.calculateFaceLocation(response))
+      .then(result => {
+        const regions = result.outputs[0].data.regions
+        // console.log(regions)
+
+        this.displayFaceBox(this.calculateFaceLocation(regions))
       })
-      .catch(error => console.log('error', error));
+      .catch(error => console.log('error', error))
   }
 
   render() {
