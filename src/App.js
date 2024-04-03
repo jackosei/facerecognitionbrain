@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import Navigation from './components/Navigation/Navigation'
-import Logo from './components/Logo/Logo'
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm'
 import Rank from './components/Rank/Rank'
 import SignIn from './components/SignIn/SignIn'
+import Register from './components/Register/Register'
 import FaceRecognition from './components/FaceRecognition/FaceRecognition'
 import ParticlesBg from 'particles-bg'
 import './App.css';
@@ -130,18 +130,27 @@ class App extends Component {
   }
 
   render() {
+    // destructure this.state to avoid repeatition
+    const { onButtonSubmit, onInputChange, onRouteChange, state } = this
+    const { route, box, imageUrl } = state
+
     return (
       <div className="App">
         <ParticlesBg type="lines" num={7} bg={true} />
-        <Navigation onRouteChange={this.onRouteChange} />
+        <Navigation routeStatus={route} onRouteChange={onRouteChange} />
         {
-          this.state.route === 'signin' ?
-            <SignIn onRouteChange={this.onRouteChange} /> :
+          route === 'home' ?
             <>
               <Rank />
-              <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-              <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl} />
+              <ImageLinkForm onInputChange={onInputChange} onButtonSubmit={onButtonSubmit} />
+              <FaceRecognition box={box} imageUrl={imageUrl} />
             </>
+            : (
+              route === 'signin'
+                ? <SignIn onRouteChange={onRouteChange} />
+                : <Register onRouteChange={onRouteChange} />
+            )
+
         }
       </div >
     );
